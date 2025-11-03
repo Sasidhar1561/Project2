@@ -11,21 +11,10 @@ pipeline {
         SONAR_TOKEN = credentials('sonarqube')   // Stored in Jenkins Credentials
         SONAR_ORGANIZATION = "vprofilesasi"
         SONAR_PROJECT_KEY = "vprofilesasi"
+        registryCredential = 'ecr:us-east-1:awscred'
+        appRegistry = "820672721556.dkr.ecr.us-east-1.amazonaws.com/vprofile"
+        vprofileRegistry = "https://820672721556.dkr.ecr.us-east-1.amazonaws.com"
     }
-
-    stages {
-        stage("Testing pipeline") {
-            steps {
-                sh "echo sasi"
-            }
-        }
-
-        stage('Debug PATH') {
-            steps {
-                sh 'echo $PATH'
-                sh 'sonar-scanner -v'
-            }
-        }
 
         stage('Fetch code') {
             steps {
@@ -92,6 +81,30 @@ pipeline {
                      type: 'war']
                   ]
                 )
+            }
+        }
+        stage('Build App Image') {
+          steps {
+            script {
+                dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", ".")
+                }
+          }
+        }
+        
+        stage('Upload App Image') {
+          steps{
+            script {
+              docker.withRegistry( vprofileRegistry, registryCredential ) {
+                dockerImage.push("$BUILD_NUMBER")
+                dockerImage.push('latest')
+              }
+            }
+          }
+        }
+
+        stage('Remove Container Images'){
+            steps{
+                sh 'docker rmi -f $(docker images -a -q)'
             }
         }
     }
