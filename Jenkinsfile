@@ -16,6 +16,8 @@ pipeline {
         vprofileRegistry = "https://820672721556.dkr.ecr.us-east-1.amazonaws.com"
     }
 
+    stages{
+
         stage('Fetch code') {
             steps {
                 git branch: 'main', url: 'https://github.com/hkhcoder/vprofile-action.git'
@@ -90,7 +92,7 @@ pipeline {
                 }
           }
         }
-        
+
         stage('Upload App Image') {
           steps{
             script {
