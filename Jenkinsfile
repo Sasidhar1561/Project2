@@ -20,7 +20,7 @@ pipeline {
 
         stage('Fetch code') {
             steps {
-                git branch: 'main', url: 'https://github.com/hkhcoder/vprofile-action.git'
+                git branch: 'main', url: 'https://github.com/Sasidhar1561/Project2.git'
             }
         }
 
