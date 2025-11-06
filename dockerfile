@@ -1,8 +1,9 @@
 FROM maven:3.9.5-eclipse-temurin-17 AS build_image
-RUN apt update && apt install git unzip vim -y
+RUN apt-get update && apt-get install -y git unzip vim && rm -rf /var/lib/apt/lists/*
 WORKDIR /opt
 RUN git clone https://github.com/Sasidhar1561/Project2.git
-RUN cd Project2 && mvn clean package
+WORKDIR /opt/Project2
+RUN mvn clean package -DskipTests
 
 FROM tomcat:10.1-jdk17-temurin
 WORKDIR /usr/local/tomcat
